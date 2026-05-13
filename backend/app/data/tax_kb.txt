@@ -1,0 +1,18 @@
+GST (Goods and Services Tax) in India is a comprehensive, multi-stage, destination-based tax that is levied on every value addition.
+Under Section 80C of the Income Tax Act, an individual or HUF can claim a deduction of up to Rs. 1.5 lakh from their total income.
+Income tax slabs for FY 2024-25 (Assessment Year 2025-26) under the New Tax Regime:
+- Up to Rs 3 lakh: Nil
+- Rs 3 lakh to Rs 6 lakh: 5%
+- Rs 6 lakh to Rs 9 lakh: 10%
+- Rs 9 lakh to Rs 12 lakh: 15%
+- Rs 12 lakh to Rs 15 lakh: 20%
+- Above Rs 15 lakh: 30%
+Standard Deduction for salaried individuals is Rs 75,000 in the New Tax Regime.
+GST Registration is mandatory for businesses with an annual turnover exceeding Rs 40 lakh (Rs 20 lakh for North-Eastern and hilly states).
+Input Tax Credit (ITC) allows businesses to reduce the tax they have already paid on inputs from the tax they have to pay on outputs.
+Section 80D allows deduction for medical insurance premium paid for self, spouse, children, and parents.
+Capital Gains Tax: Long-term capital gains (LTCG) on listed equity shares exceeding Rs 1.25 lakh are taxed at 12.5%.
+Short-term capital gains (STCG) on listed equity shares are taxed at 20%.
+Corporate Tax rate for domestic companies is generally 25% or 30%, but can be 15% for new manufacturing companies under Section 115BAB.
+ TDS (Tax Deducted at Source) is required to be deducted by the payer at the time of making specified payments like salary, rent, professional fees, etc.
+Professional Tax is a state-level tax on professions, trades, and employments, usually capped at Rs 2,500 per year.
