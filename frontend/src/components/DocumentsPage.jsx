@@ -1,13 +1,37 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Upload, FileText, X, CheckCircle, AlertCircle, File } from 'lucide-react';
 
 const DocumentsPage = () => {
   const [dragOver, setDragOver] = useState(false);
-  const [files, setFiles] = useState([
-    { id: 1, name: 'GST_Return_April_2025.pdf', size: '1.2 MB', status: 'processed', type: 'PDF' },
-    { id: 2, name: 'TDS_Certificate_Q4.xlsx', size: '840 KB', status: 'processed', type: 'XLS' },
-    { id: 3, name: 'Balance_Sheet_FY24.pdf', size: '2.1 MB', status: 'processing', type: 'PDF' },
-  ]);
+  const [files, setFiles] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchDocuments = async () => {
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+      const response = await fetch(`${apiUrl}/documents`);
+      if (response.ok) {
+        const data = await response.json();
+        // Map DB response to UI state
+        const dbFiles = data.map(doc => ({
+          id: doc.id,
+          name: doc.filename,
+          size: doc.size_mb,
+          status: doc.status,
+          type: doc.file_type
+        }));
+        setFiles(dbFiles);
+      }
+    } catch (error) {
+      console.error("Error fetching documents:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchDocuments();
+  }, []);
 
   const processUploads = async (selectedFiles) => {
     const newFiles = selectedFiles.map((f, i) => ({
@@ -33,8 +57,14 @@ const DocumentsPage = () => {
         });
 
         if (response.ok) {
+          const newDoc = await response.json();
           setFiles(prev => prev.map(f =>
-            f.id === fileObj.id ? { ...f, status: 'processed' } : f
+            f.id === fileObj.id ? { 
+              ...f, 
+              status: 'processed',
+              id: newDoc.id, // Update to DB ID
+              size: newDoc.size_mb
+            } : f
           ));
         } else {
           setFiles(prev => prev.map(f =>
@@ -123,13 +153,18 @@ const DocumentsPage = () => {
           <span className="ml-auto text-sm text-slate-400 font-normal">{files.length} file{files.length !== 1 ? 's' : ''}</span>
         </h3>
         <div className="space-y-3">
-          {files.length === 0 && (
+          {isLoading ? (
+            <div className="text-center py-10 text-slate-500">
+              <div className="w-8 h-8 border-4 border-indigo-400 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+              <p>Loading documents...</p>
+            </div>
+          ) : files.length === 0 ? (
             <div className="text-center py-10 text-slate-500">
               <File size={32} className="mx-auto mb-2 opacity-30" />
               <p>No documents uploaded yet.</p>
             </div>
-          )}
-          {files.map((file) => (
+          ) : (
+            files.map((file) => (
             <div key={file.id} className="flex items-center gap-4 p-3 rounded-xl border border-white/5 hover:bg-white/5 transition-colors group">
               <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0 ${typeColor(file.type)}`}>
                 {file.type}
@@ -151,7 +186,8 @@ const DocumentsPage = () => {
                 </button>
               </div>
             </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
     </div>

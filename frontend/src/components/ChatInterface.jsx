@@ -3,12 +3,42 @@ import { Send, User, Bot, Paperclip, Mic } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const ChatInterface = () => {
-  const [messages, setMessages] = useState([
-    { id: 1, type: 'bot', content: "Hello! I'm your TaxMind AI Assistant. How can I help you with your GST or Income Tax queries today?" },
-  ]);
+  const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isFetchingHistory, setIsFetchingHistory] = useState(true);
   const messagesEndRef = useRef(null);
+
+  useEffect(() => {
+    const fetchHistory = async () => {
+      try {
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+        const response = await fetch(`${apiUrl}/chat/history`);
+        if (response.ok) {
+          const data = await response.json();
+          if (data.length > 0) {
+            setMessages(data.map(msg => ({
+              id: msg.id,
+              type: msg.role,
+              content: msg.content
+            })));
+          } else {
+            setMessages([
+              { id: 'welcome', type: 'bot', content: "Hello! I'm your TaxMind AI Assistant. How can I help you with your GST or Income Tax queries today?" }
+            ]);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch chat history:", error);
+        setMessages([
+          { id: 'welcome', type: 'bot', content: "Hello! I'm your TaxMind AI Assistant. How can I help you with your GST or Income Tax queries today?" }
+        ]);
+      } finally {
+        setIsFetchingHistory(false);
+      }
+    };
+    fetchHistory();
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -75,8 +105,13 @@ const ChatInterface = () => {
 
       {/* Messages Area */}
       <div className="flex-1 overflow-y-auto p-6 space-y-4">
-        <AnimatePresence>
-          {messages.map((msg) => (
+        {isFetchingHistory ? (
+          <div className="flex justify-center py-10">
+            <div className="w-8 h-8 border-4 border-indigo-400 border-t-transparent rounded-full animate-spin" />
+          </div>
+        ) : (
+          <AnimatePresence>
+            {messages.map((msg) => (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -93,6 +128,7 @@ const ChatInterface = () => {
             </motion.div>
           ))}
         </AnimatePresence>
+        )}
         {isLoading && (
           <div className="flex justify-start">
             <div className="bg-white/5 border border-white/10 p-4 rounded-2xl rounded-tl-none">
